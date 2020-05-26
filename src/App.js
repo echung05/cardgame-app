@@ -7,6 +7,7 @@ import Button from "react-bootstrap/Button"
 import Card from "react-bootstrap/Card"
 import CardDeck from "react-bootstrap/CardDeck"
 
+// full standard card deck
 const Deck = [
   '2H', '2C', '2S', '2D',
   '3H', '3C', '3S', '3D',
@@ -27,16 +28,19 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cpuCards: [],
-      cpuCardPlayed: [],
-      pCards: [],
-      pCardPlayed: [],
-      winnableCards: [],
-      inGame: false
+      cpuCards: [], // cpu card deck
+      cpuCardPlayed: [], // card(s) being played
+      pCards: [], // player card deck
+      pCardPlayed: [], // card(s) being played
+      winnableCards: [], // holds winnable cards when cards match
+      inGame: false // whether game is being played currently
     };
 
   }
-
+  /**
+   * Handles start of game when "start" button clicked.
+   * Shuffles deck and distributes it to CPU and player.
+   */
   handleStart = () => {
     console.log("starting game");
     // shuffle deck
@@ -53,7 +57,9 @@ class App extends Component {
     this.setState({ inGame: true, });
   }
 
-  // helps shuffle cards before dealing 
+  /**
+   * Helper for shuffling card deck. 
+   */
   shuffleCards = () => {
     console.log("shuffling!");
     let index = Deck.length, temp, randIndex;
@@ -68,13 +74,22 @@ class App extends Component {
     }
     return Deck;
   }
-  // draws and compares cards, handles matching card draws in compareCards()
+
+  /**
+   * Handles drawing of cards when "draw" button clicked.
+   * Draws and compares cards from CPU and player decks.
+   */
   handleDraw = () => {
     console.log("drawing!");
     this.drawCards();
     this.compareCards();
   }
 
+  /**
+   * Helper for drawing CPU and player cards.
+   * Draws from the top of each deck.
+   * Updates each deck with remaining cards.
+   */
   drawCards = () => {
     // deal CPU card
     this.state.cpuCardPlayed.push(this.state.cpuCards[0]);
@@ -92,6 +107,13 @@ class App extends Component {
     console.log("player card played ", this.state.pCardPlayed);
   }
 
+  /**
+   * Helper for comparing cards. 
+   * When values are tied, will put current cards in winnable stack.
+   * IN PROGRESS:
+   * Draws two more cards, one face up and one face down (not shown).
+   * These cards are compared again and the winner takes all. 
+   */
   compareCards = () => {
     let cpuCardVal = this.state.cpuCardPlayed[0].charAt(0);
     let pCardVal = this.state.pCardPlayed[0].charAt(0);
@@ -107,38 +129,37 @@ class App extends Component {
       this.drawCards();
       // each player draws next card placed face down
       this.drawCards();
-      console.log("winnable: ", this.state.winnableCards);
-      console.log("drawn: ", this.cpuCardPlayed, this.pCardPlayed);
     }
-
   }
 
-
   render() {
-
+    //keeps track of deck sizes
     var cpuCount = this.state.cpuCards.length;
     var pCount = this.state.pCards.length;
 
+    // keeps track of whether player is in an active game or not
     const inGame = this.state.inGame;
     let button;
+    // if player is in game, display "Draw Card" button and draw a card when clicked
     if (inGame) {
       button = <Button variant="outline-light" onClick={() => this.handleDraw()}
         style={{ margin: "0 auto", width: "10vw", height: "5vh", marginTop: "2vh", marginBottom: "5vh", float: "none" }}>
         Draw Card
     </Button>;
+      // if player is not in game, display "Start" button and start game when clicked
     } else {
       button = <Button variant="outline-light" onClick={() => this.handleStart()}
         style={{ margin: "0 auto", width: "10vw", height: "5vh", marginTop: "2vh", marginBottom: "5vh", float: "none" }}>
         Start
     </Button>;
     }
+    // shows current face-up card in CPU and player deck
     let cpuCard;
     if (inGame) {
       cpuCard = this.state.cpuCardPlayed[0];
     } else {
       cpuCard = "CARD";
     }
-
     let pCard;
     if (inGame) {
       pCard = this.state.pCardPlayed[0];
@@ -146,7 +167,7 @@ class App extends Component {
       pCard = "CARD";
     }
 
-
+    //TODO: separate out components into different files once basic functionality complete
     return (
       <div className="App">
         <Navbar bg="light" expand="lg">
